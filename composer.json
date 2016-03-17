@@ -1,0 +1,9 @@
+{
+    "autoload": {
+        "psr-4": {"YRS\\": "server/src/"}
+    },
+    "require": {
+        "nlp-tools/nlp-tools": "^0.1.1",
+        "nubs/vectorix": "^1.1"
+    }
+}
