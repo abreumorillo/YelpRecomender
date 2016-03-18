@@ -1,5 +1,5 @@
 var appInfo = {
-    module: 'yrrApp'
+    module: 'yrsApp' //This stand for Yelp Recommender System
 };
 /**
  * Purpose      : This is the angular main module for application. We only use one module as this is a little application.
