@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('frdApp')
+        .module(appInfo.module)
         .factory('IndexService', IndexService);
 
     IndexService.$inject = ['$http', '$q', 'appConfig'];
@@ -21,10 +21,10 @@
             var deferred = $q.defer();
 
             $http({
-                    method: 'GET',
-                    url: serviceUrl,
-                    params: {action: 'getPapers', searchTerm: searchTerm, page: page, itemPerPage: itemPerPage}
-                })
+                method: 'GET',
+                url: serviceUrl,
+                params: { action: 'getPapers', searchTerm: searchTerm, page: page, itemPerPage: itemPerPage }
+            })
                 .success(function(data, status) {
                     deferred.resolve({
                         data: data,

@@ -15,11 +15,11 @@
                         controllerAs: 'vm',
                         templateUrl: 'app/views/index.html'
                     })
-                    .state('login', {
-                        url: '/login',
-                        controller: 'LoginController',
+                    .state('details', {
+                        url: '/details/:restaurant/:city/:state',
+                        controller: 'DetailsController',
                         controllerAs: 'vm',
-                        templateUrl: 'app/views/login.html'
+                        templateUrl: 'app/views/details.html'
                     });
             }
         ]);

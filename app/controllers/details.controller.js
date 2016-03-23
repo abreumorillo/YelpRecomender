@@ -8,9 +8,9 @@
         .module(appInfo.module)
         .controller('DetailsController', DetailsController);
 
-    DetailsController.$inject = ['$stateParams',  '$state', 'OmdbService', 'toastr'];
+    DetailsController.$inject = ['YelpService', '$stateParams',  '$state',  'toastr'];
 
-    function DetailsController($stateParams, $state, OmdbService, toastr) {
+    function DetailsController(YelpService, $stateParams, $state, toastr) {
         /* jshint validthis:true */
         var vm = this;
         //Rating
@@ -27,7 +27,12 @@
          * This functions is executed when this controller gets intatantiated 
          */
         function activate() {            
-            getMovieDetails();
+            // getMovieDetails();
+            // console.log('activated', $stateParams);
+            // console.log(YelpService);
+            var restaurant = $stateParams.restaurant;
+            var location = $stateParams.city + ', '+ $stateParams.state;
+            YelpService.getRestaurants(restaurant, location);
         }
 
         /**
