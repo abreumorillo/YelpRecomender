@@ -29,10 +29,17 @@
 
         ////////////////
 
+        /**
+         * This function validades if the response is OK (200)
+         */
         function _isValidResponse(response) {
             return (response.status === statusCode.HTTP_OK && (angular.isObject(response.data) || angular.isArray(response.data)));
         }
 
+        /**
+         * The purpose of this method is to format the result as an array for further client side
+         * processing.
+         */
         function _getResponse(response) {
             var result = [];
             if (angular.isArray(response.data)) {
@@ -52,6 +59,7 @@
         function _isInvalidFormElement(formElement) {
             return formElement.$dirty && formElement.$invalid;
         }
+        
         /**
          * Go back to a particular state
          * @param  {string} url area to navigate

@@ -2,10 +2,10 @@
 
 require_once('bootstrapper.inc');
 
-$fileContent = file_get_contents("data/cv000_29416.txt");
-$firstLine = explode("\n", $fileContent);
+// $fileContent = file_get_contents("data/cv000_29416.txt");
+// $firstLine = explode("\n", $fileContent);
 
-
+// var_dump ($firstLine);
 
 // foreach ($firstLine as $line) {
 //     echo $line.'<br>';
@@ -15,7 +15,7 @@ $firstLine = explode("\n", $fileContent);
 
 
 
-
+//Testing file reading files -- Worked!
 //  $dir = "data/";
 
 // // Open a known directory, and proceed to read its contents
@@ -28,12 +28,18 @@ $firstLine = explode("\n", $fileContent);
 //     }
 // }
 
-$docId = 0;
+// $docId = 0;
+// $documents =[];
+// foreach (glob("data/*.txt") as $filename) {
+//     // echo "$filename size " . filesize($filename) . "<BR>";
+//     $documents[$docId] = file($filename);
+//     $docId++;
+// }
+
 $documents =[];
-foreach (glob("data/*.txt") as $filename) {
+foreach (glob("data/*.txt") as $key => $filename) {
     // echo "$filename size " . filesize($filename) . "<BR>";
-    $documents[$docId] = file($filename);
-    $docId++;
+    $documents[$key] = file($filename);
 }
 
 var_dump($documents);

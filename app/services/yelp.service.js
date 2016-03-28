@@ -1,3 +1,9 @@
+/**
+ * @purpose         : This service provide an interface to comunicate with the Yelp API in order to retrieve
+ *                    Aditional data.
+ * @course          : Knowledge Process Technologies (ISTE-612)
+ * 
+ */
 (function() {
     'use strict';
     angular.module(appInfo.module)
