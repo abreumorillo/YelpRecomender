@@ -1,7 +1,24 @@
 <?php
-
 require_once('bootstrapper.inc');
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+use YRS\Parser;
 
+$app = new \Slim\App;
+
+/*
+    Simple RESTful API for the application
+*/
+
+$app->get('/api/restaurants/{name}', function (Request $request, Response $response) {
+    $name = $request->getAttribute('name');
+    $parser = new Parser();
+    $test = $parser->getDocuments();
+    return $response->withJSON(['info'=> "Hello, $name $test"]);
+});
+
+$app->run();
+// echo json_encode(['greeting'=>'Hello']);
 // $fileContent = file_get_contents("data/cv000_29416.txt");
 // $firstLine = explode("\n", $fileContent);
 
@@ -35,14 +52,15 @@ require_once('bootstrapper.inc');
 //     $documents[$docId] = file($filename);
 //     $docId++;
 // }
+// echo 'HELLO';
 
-$documents =[];
-foreach (glob("data/*.txt") as $key => $filename) {
-    // echo "$filename size " . filesize($filename) . "<BR>";
-    $documents[$key] = file($filename);
-}
+// $documents =[];
+// foreach (glob("data/*.txt") as $key => $filename) {
+//     // echo "$filename size " . filesize($filename) . "<BR>";
+//     $documents[$key] = file($filename);
+// }
 
-var_dump($documents);
+// var_dump($documents);
 
 // foreach ($documents as $docment) {
 //     echo '--------------------------------------------'.'<BR>';
