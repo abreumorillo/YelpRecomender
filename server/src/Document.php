@@ -2,6 +2,6 @@
 
 namespace YRS;
 
-class Parser {
+class Document {
     //TODO implement
 }

@@ -6,5 +6,9 @@
         "nlp-tools/nlp-tools": "^0.1.1",
         "nubs/vectorix": "^1.1",
         "slim/slim": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "laracasts/integrated": "^0.15.6"
     }
 }

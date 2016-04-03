@@ -3,6 +3,7 @@ require_once('bootstrapper.inc');
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use YRS\Parser;
+use YRS\StemTokenizer;
 
 $app = new \Slim\App;
 
@@ -18,6 +19,9 @@ $app->get('/api/restaurants/{name}', function (Request $request, Response $respo
 });
 
 $app->run();
+
+$document = "The ponies abandoment in the universe";
+var_dump(StemTokenizer::getTokens($document));
 // echo json_encode(['greeting'=>'Hello']);
 // $fileContent = file_get_contents("data/cv000_29416.txt");
 // $firstLine = explode("\n", $fileContent);
