@@ -18,17 +18,17 @@ class VectorSpaceModel
      */
     private $documents;
 
-    /**
-     * Dictionary of term
-     * @var array
-     */
-    private $termList;
+    // /**
+    //  * Dictionary of term
+    //  * @var array
+    //  */
+    // private $termList;
 
-    /**
-     * Postings list
-     * @var array
-     */
-    private $docLists;
+    // /**
+    //  * Postings list
+    //  * @var array
+    //  */
+    // private $docLists;
 
     private $restaurants = array();
 
