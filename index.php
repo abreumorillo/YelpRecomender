@@ -20,13 +20,15 @@ $app->get('/api/restaurants/{name}', function (Request $request, Response $respo
 
 // $app->run();
 
-// $document = "The ponies abandoment in the universe";
-// var_dump(StemTokenizer::getTokens($document));
+$document = "The ponies abandoment in the universe";
+var_dump(StemTokenizer::getTokens($document));
+
+echo '<h1>New changes</h1>';
 // echo json_encode(['greeting'=>'Hello']);
 // $fileContent = file_get_contents("data/rest_review5.txt");
-$fileContent = file_get_contents("data/restaurant_review4.json");
-$json = json_decode($fileContent);
-var_dump($json);
+// $fileContent = file_get_contents("data/restaurant_review4.json");
+// $json = json_decode($fileContent);
+// var_dump($json);
 // $firstLine = explode("\n", $fileContent);
 
 // $json = '{"a":1,"b":2,"c":3,"d":4,"e":5}';
