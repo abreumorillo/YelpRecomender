@@ -4,6 +4,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use YRS\Parser;
 use YRS\StemTokenizer;
+use YRS\VectorSpaceModel;
 
 $app = new \Slim\App;
 
@@ -20,17 +21,15 @@ $app->get('/api/restaurants/{name}', function (Request $request, Response $respo
 
 // $app->run();
 
-$document = "The ponies abandoment in the universe";
-var_dump(StemTokenizer::getTokens($document));
-
-echo '<h1>New changes</h1>';
-echo "<h2>change two</h2>";
+//StemTokenizer testing
+// $document = "The ponies abandoment in the universe";
+// var_dump(StemTokenizer::getTokens($document));
 
 // echo json_encode(['greeting'=>'Hello']);
 // $fileContent = file_get_contents("data/rest_review5.txt");
 // $fileContent = file_get_contents("data/restaurant_review4.json");
 // $json = json_decode($fileContent);
-// var_dump($json);
+// print_r($json->content);
 // $firstLine = explode("\n", $fileContent);
 
 // $json = '{"a":1,"b":2,"c":3,"d":4,"e":5}';
@@ -67,16 +66,24 @@ echo "<h2>change two</h2>";
 //     $docId++;
 // }
 // echo 'HELLO';
-
-// $documents =[];
-// foreach (glob("data/*.txt") as $key => $filename) {
-//     // echo "$filename size " . filesize($filename) . "<BR>";
-//     $documents[$key] = file($filename);
+// echo '<h1>Vector Space Model </h1><br>';
+$parser = new Parser();
+$documents = $parser->getDocuments();
+$vsm = new VectorSpaceModel($documents);
+$vsm->search("excel good food");
+// foreach (glob("data/*.json") as $key => $file) {
+//     $now = microtime();
+//     // echo substr($filename, 5, strrpos($filename, '.')-5) .'<br>';
+//     $document = json_decode(file_get_contents($file)); //True for returning content as associative array
+//     preg_match('/\/(.*?)\./', $file, $match);
+//     $document->fileName= $match[1];
+//     $documents[] = $document;
 // }
+// echo $now;
+ // var_dump($documents);
 
-// var_dump($documents);
-
-// foreach ($documents as $docment) {
+// foreach ($documents as $document) {
 //     echo '--------------------------------------------'.'<BR>';
-//     echo $docment.'<BR>';
+//     echo $document->businessName.'<BR>';
+//     echo $document->content.'<BR>';
 // }
