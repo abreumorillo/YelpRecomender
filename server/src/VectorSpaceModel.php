@@ -106,6 +106,7 @@ class VectorSpaceModel
             $this->restaurants[$docId] = $doc;
 
             foreach ($tokens as $token) {
+                $token = PorterStemmer::Stem(strtolower($token)); //Tokenize search term
                 if (!isset($this->index[$token])) {
                     $this->index[$token] = array('df' => 0, 'postings' => array());
                 }
