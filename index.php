@@ -1,25 +1,42 @@
 <?php
-require_once('bootstrapper.inc');
+
+require_once 'bootstrapper.inc';
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use YRS\Parser;
 use YRS\StemTokenizer;
 use YRS\VectorSpaceModel;
 
-$app = new \Slim\App;
+$app = new \Slim\App();
 
-/*
-    Simple RESTful API for the application
-*/
+$parser = new Parser();
+$documents = $parser->getDocuments();
+$vsm = new VectorSpaceModel($documents);
 
-$app->get('/api/restaurants/{name}', function (Request $request, Response $response) {
-    $name = $request->getAttribute('name');
-    $parser = new Parser();
-    $test = $parser->getDocuments();
-    return $response->withJSON(['info'=> "Hello, $name $test"]);
+
+    //Home route /
+// $app->get('/', function (Request $request, Response $response) {
+
+//     $indexHtml = file_get_contents('index.html');
+//     $response = $response->write($indexHtml);
+
+//     return  $response;
+// });
+
+    //Restaurant API /api/restaurants/searchString
+$app->get('/api/restaurants/{searchString}', function (Request $request, Response $response) use($vsm) {
+
+    $searchString = $request->getAttribute('searchString');
+    $result = $vsm->search($searchString);
+    // return $response->withJSON(['info' => "Hello, $searchString"]);
+    if(count($result)<=0) {
+        return $response->withJSON(['message' => 'Not data found'], 404);
+    }
+    return $response->withJSON($result);
+
 });
 
-// $app->run();
+$app->run();
 
 //StemTokenizer testing
 // $document = "The ponies abandoment in the universe";
@@ -43,8 +60,6 @@ $app->get('/api/restaurants/{name}', function (Request $request, Response $respo
 
 // $files = scandir('data/');
 
-
-
 //Testing file reading files -- Worked!
 //  $dir = "data/";
 
@@ -65,12 +80,15 @@ $app->get('/api/restaurants/{name}', function (Request $request, Response $respo
 //     $documents[$docId] = file($filename);
 //     $docId++;
 // }
+//
+//
 // echo 'HELLO';
 // echo '<h1>Vector Space Model </h1><br>';
-$parser = new Parser();
-$documents = $parser->getDocuments();
-$vsm = new VectorSpaceModel($documents);
-$vsm->search("excel good food");
+// $parser = new Parser();
+// $documents = $parser->getDocuments();
+// $vsm = new VectorSpaceModel($documents);
+// $vsm->search("excel good food");
+
 // foreach (glob("data/*.json") as $key => $file) {
 //     $now = microtime();
 //     // echo substr($filename, 5, strrpos($filename, '.')-5) .'<br>';

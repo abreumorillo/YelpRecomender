@@ -9,23 +9,23 @@
 
     /* @ngInject */
     function IndexService($http, $q, appConfig) {
-        var serviceUrl = appConfig.baseUrl = 'server/controllers/papercontroller.php';
+        var serviceUrl = appConfig.baseUrl = '/api/restaurants/{searchString}';
         var service = {
-            searchPaper: _searchPaper
+            getRestaurants: _getRestaurants
         };
         return service;
 
         ////////////////
 
-        function _searchPaper(searchTerm, page, itemPerPage) {
+        function _getRestaurants(searchString) {
             var deferred = $q.defer();
-
+            var url = serviceUrl.replace('{searchString}',searchString);
             $http({
-                method: 'GET',
-                url: serviceUrl,
-                params: { action: 'getPapers', searchTerm: searchTerm, page: page, itemPerPage: itemPerPage }
-            })
+                    method: 'GET',
+                    url: url
+                })
                 .success(function(data, status) {
+                    console.log(data, status);
                     deferred.resolve({
                         data: data,
                         status: status

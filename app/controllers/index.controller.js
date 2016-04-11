@@ -5,10 +5,10 @@
         .module(appInfo.module)
         .controller('IndexController', IndexController);
 
-    IndexController.$inject = ['$scope', 'CommonService', 'toastr'];
+    IndexController.$inject = ['$scope', 'CommonService', 'toastr', 'IndexService'];
 
     /* @ngInject */
-    function IndexController($scope, CommonService, toastr) {
+    function IndexController($scope, CommonService, toastr, IndexService) {
         var vm = this;
         vm.title = 'IndexController';
         vm.searchTerm = "";
@@ -22,6 +22,7 @@
         vm.isSearching = false;
         vm.isShowingDetails = false;
         vm.restaurantDetails = {};
+        vm.closeSearch = closeSearch;
 
         //FUNCTIONS
         vm.closeDetails = closeDetails;
@@ -39,29 +40,29 @@
          * @return {array}
          */
         function search() {
-            console.log('search');
-            // if (vm.searchTerm.length <= 0) {
-            //     return;
-            // }
-            // vm.isSearching = true;
-            // IndexService.searchPaper(vm.searchTerm, vm.currentPage, vm.itemPerPage).then(function(response) {
-            //     vm.isSearching = false;
-            //     if(response.status === CommonService.statusCode.HTTP_NO_CONTENT) {
-            //         toastr.info('No paper in the database');
-            //         vm.papers = [];
-            //     }
-            //     if (CommonService.isValidResponse(response)) {
-            //         vm.papers = [];
-            //         vm.papers = CommonService.getResponse(response);
-            //         vm.isSearchResult = true;
-            //     } else {
-            //         toastr.warning("No paper found that maches " + vm.searchTerm);
-            //     }
+            if (vm.searchTerm.length <= 0) {
+                return;
+            }
+            vm.isSearching = true;
+            IndexService.getRestaurants(vm.searchTerm).then(function(response) {
+                console.log(response);
+                vm.isSearching = false;
+                if(response.status === CommonService.statusCode.HTTP_NO_CONTENT) {
+                    toastr.info('No restaurant found for the given criteria ' + vm.searchTerm);
+                    vm.restaurants = [];
+                }
+                if (CommonService.isValidResponse(response)) {
+                    vm.restaurants = [];
+                    vm.restaurants = CommonService.getResponse(response);
+                    vm.isSearchResult = true;
+                } else {
+                    toastr.warning("No restaurant found for the given criteria " + vm.searchTerm);
+                }
 
-            // }, function(errorResponse) {
-            //     toastr.warning("No paper found that maches " + vm.searchTerm);
-            //     vm.isSearching = false;
-            // });
+            }, function(errorResponse) {
+                toastr.warning("No restaurant found for the given criteria " + vm.searchTerm);
+                vm.isSearching = false;
+            });
         }
 
         /**
@@ -71,6 +72,10 @@
 
         function closeDetails() {
             vm.isShowingDetails = false;
+        }
+
+        function closeSearch(){
+           vm.isSearchResult = false;
         }
 
     }
