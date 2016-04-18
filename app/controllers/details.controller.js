@@ -24,9 +24,9 @@
         activate();
 
         /*
-         * This functions is executed when this controller gets intatantiated 
+         * This functions is executed when this controller gets intatantiated
          */
-        function activate() {            
+        function activate() {
             // getMovieDetails();
             // console.log('activated', $stateParams);
             // console.log(YelpService);
@@ -48,7 +48,7 @@
                     vm.movieInfo.rating = calcRating(data);
                     vm.movieInfo.Poster = getMoviePoster(vm.movieInfo.Poster);
                 }
-            }, function (errorResponse) { 
+            }, function (errorResponse) {
                 //Handle error
                 toastr.error("An error has occurred.", "Code: "+errorResponse.status);
             });
@@ -67,17 +67,17 @@
             if (!genre) return;
             return genre.split(', ');
         }
-        
+
         function getMoviePoster(url) {
             if(url !== "N/A") {
                 return url;
             }
             return "img/no_image_available.jpeg";
         }
-        
+
 
         /**
-         * Get CSS label class for movie/series genre   
+         * Get CSS label class for movie/series genre
          * @param {string} genre
          * @returns {CSS class}
          */
@@ -89,27 +89,27 @@
                 case 'Animation':
                 case 'Family':
                     return "label label-info";
-                
+
                 case 'Action':
                 case 'Romance':
                     return "label label-primary";
-                    
+
                 case 'Sci-Fi':
                 case 'Fantasy':
                 case 'Drama':
                     return "label label-warning";
-                    
+
                 case 'Mystery':
                 case 'Thriller':
                 case 'Crime':
                 case 'Horror':
                     return "label label-danger";
-                    
+
                 case 'Comedy':
                 case 'Fantasy':
                 case 'Musical':
                     return "label label-success";
-                    
+
                 default:
                     return "label label-default";
             }

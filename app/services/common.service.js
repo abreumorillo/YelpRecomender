@@ -1,3 +1,7 @@
+/**
+ * @purpose: This service is used provide commong functionalities accross the application
+ * @return {mix}
+ */
 (function() {
     'use strict';
 
@@ -59,7 +63,7 @@
         function _isInvalidFormElement(formElement) {
             return formElement.$dirty && formElement.$invalid;
         }
-        
+
         /**
          * Go back to a particular state
          * @param  {string} url area to navigate

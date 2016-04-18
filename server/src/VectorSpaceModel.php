@@ -6,11 +6,11 @@ namespace  YRS;
  *@purpose         : This class is used for building the index  using the the Vector Space Model algorithm.
  *@course          : Knowledge Processing Technologies.
  *
- *@author          : Group #
+ *@author          : Group #6
  *
  *@version         : 1.0
  *
- *@see             : Parser.php, StemTokenizer.php, Document.php
+ *@see             : Parser.php, Tokenizer.php, Document.php
  */
 class VectorSpaceModel
 {
@@ -96,8 +96,8 @@ class VectorSpaceModel
     {
         $docCount = array();
         foreach ($this->documents as $docId => $doc) {
-            //Get the tokens for each document, as part of the token normalization process we do stemming and casefolding @see StemTokenizer
-            $tokens = StemTokenizer::getTokens($doc->content);
+            //Get the tokens for each document, as part of the token normalization process we do stemming and casefolding @see Tokenizer
+            $tokens = Tokenizer::getTokens($doc->content);
             //As in PHP array are dinamic we need to initialize the length of each document and scores with zero, otherwise we will get error calculating the length of the document, we would get Undefined offset: N, where N is the document.
             $this->docLength[$docId] = 0;
             $this->scores[$docId] = 0;

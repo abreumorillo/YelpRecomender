@@ -1,9 +1,11 @@
 <?php
 
 namespace YRS;
+
 /**
  * @purpose   : This class is responsible of the parsing process. For the purpose of this project are documents are represente using JSON files
  * @course      : Knowledge Processing Technologies
+ *
  * @author      : Team #
  * @caveat      : This parser only works with JSON formatted files.
  */
@@ -11,15 +13,17 @@ class Parser
 {
     /**
      * Root directory where documents are stored.
+     *
      * @var string
      */
     private static $documentFolder = 'data/';
 
     /**
      * Array for storing parsed documents.
+     *
      * @var array
      */
-    private $documents =[];
+    private $documents = [];
 
     /**
      * WHen the class is instantiated, the parse function is executed.
@@ -30,7 +34,8 @@ class Parser
     }
 
     /**
-     * Parses the JSON files from the data directory
+     * Parses the JSON files from the data directory.
+     *
      * @return array object document
      */
     private function parse()
@@ -44,10 +49,11 @@ class Parser
     }
 
     /**
-     * Return the parsed documents
+     * Return the parsed documents.
+     *
      * @return [type] [description]
      */
-    public  function getDocuments()
+    public function getDocuments()
     {
         return $this->documents;
     }

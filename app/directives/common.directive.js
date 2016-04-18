@@ -1,8 +1,12 @@
+/**
+ * @purpose: Provide the functionality to excecute function when the enter key is pressed
+ * @return {mix}
+ */
 (function() {
     'use strict';
 
     angular
-        .module('frdApp')
+        .module(appInfo.module)
         .directive('ngEnter', function() {
             return function(scope, element, attrs) {
                 element.bind('keydown keypress', function(event) {

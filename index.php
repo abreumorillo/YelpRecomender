@@ -6,13 +6,16 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use YRS\Parser;
 use YRS\StemTokenizer;
 use YRS\VectorSpaceModel;
+use YRS\SpellChecker;
 
 $app = new \Slim\App();
+
+$document = "Excellent super food. Superb customer service. customer super service I miss the mario machines they used to have, but it's still.a great place steeped in tradition";
 
 $parser = new Parser();
 $documents = $parser->getDocuments();
 $vsm = new VectorSpaceModel($documents);
-
+$spellChecker = new SpellChecker();
 
     //Home route /
 // $app->get('/', function (Request $request, Response $response) {
@@ -23,17 +26,29 @@ $vsm = new VectorSpaceModel($documents);
 //     return  $response;
 // });
 
-    //Restaurant API /api/restaurants/searchString
-$app->get('/api/restaurants/{searchString}', function (Request $request, Response $response) use($vsm) {
+//Restaurant API URL: /api/restaurants/searchString
+$app->get('/api/restaurants/{searchString}', function (Request $request, Response $response) use ($vsm) {
 
     $searchString = $request->getAttribute('searchString');
     $result = $vsm->search($searchString);
     // return $response->withJSON(['info' => "Hello, $searchString"]);
-    if(count($result)<=0) {
+    if (count($result) <= 0) {
         return $response->withJSON(['message' => 'Not data found'], 404);
     }
+
     return $response->withJSON($result);
 
+});
+
+//Spell Checker URL: /api/spellchecker/word
+$app->get('/api/spellchecker/{term}', function (Request $request, Response $response) use ($spellChecker) {
+    $term = $request->getAttribute('term');
+    if (strlen($term) <= 2) {
+        return $response->withJSON([]);
+    }
+    $result = $spellChecker->check($term);
+
+    return $response->withJSON($result);
 });
 
 $app->run();
@@ -105,3 +120,4 @@ $app->run();
 //     echo $document->businessName.'<BR>';
 //     echo $document->content.'<BR>';
 // }
+

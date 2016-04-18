@@ -2,7 +2,7 @@
  * @purpose         : This service provide an interface to comunicate with the Yelp API in order to retrieve
  *                    Aditional data.
  * @course          : Knowledge Process Technologies (ISTE-612)
- * 
+ *
  */
 (function() {
     'use strict';
@@ -42,7 +42,7 @@
             var tokenSecret = 'dee4VqJl64kBu4m8RX4IFPrxkYI'; //Token Secret
             var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, { encodeSignature: false });
             params['oauth_signature'] = signature;
-            
+
             $http.jsonp(url, { params: params }).success(function (data, status) {
                 console.log(data);
             });
