@@ -3,19 +3,19 @@
 require_once 'bootstrapper.inc';
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use YRS\Parser;
-use YRS\StemTokenizer;
+// use YRS\Parser;
+// use YRS\StemTokenizer;
 use YRS\VectorSpaceModel;
 use YRS\SpellChecker;
 
 $app = new \Slim\App();
 
-$document = "Excellent super food. Superb customer service. customer super service I miss the mario machines they used to have, but it's still.a great place steeped in tradition";
+// $document = "Excellent super food. Superb customer service. customer super service I miss the mario machines they used to have, but it's still.a great place steeped in tradition";
 
-$parser = new Parser();
-$documents = $parser->getDocuments();
-$vsm = new VectorSpaceModel($documents);
-$spellChecker = new SpellChecker();
+// $parser = new Parser();
+// $documents = $parser->getDocuments();
+$vsm = VectorSpaceModel::getInstance();
+$spellChecker = SpellChecker::getInstance();
 
     //Home route /
 // $app->get('/', function (Request $request, Response $response) {

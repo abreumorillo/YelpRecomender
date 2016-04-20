@@ -19,7 +19,7 @@ class Tokenizer
      *
      * @var string
      */
-    private static $splitRegex = "/[\s\"\.,:;&%~^+$\(\)\$#!\?\/\\\-]+/";
+    // private static $splitRegex = "/[\s\"\.,:;&%~^+$\(\)\$#!\?\/\\\-]+/";
     private static $rawTokens = array();
 
     /**
@@ -31,20 +31,18 @@ class Tokenizer
      */
     public static function getTokens($document)
     {
-        //Split the document based on the regular expresion.
-        $tokens = preg_split(self::$splitRegex, $document);
+        $tokens = self::processTokens($document);
         foreach ($tokens as $id => $token) {
             if (strlen($token) > 0) {
-                $tokens[$id] = PorterStemmer::Stem(strtolower($tokens[$id])); //Apply the stemmer to each term.
+                $tokens[$id] = PorterStemmer::Stem($tokens[$id]); //Apply the stemmer to each term.
                 //Add to raw tokens array for spelling correction.
-                if (!in_array(strtolower(trim($token)), self::$rawTokens) && strlen($token) > 1) {
-                    self::$rawTokens[] = strtolower(trim($token));
+                if (!in_array($token, self::$rawTokens)) { // && strlen($token) > 1
+                    self::$rawTokens[] = $token;
                 }
             } else {
                 unset($tokens[$id]);
             }
         }
-
         return $tokens;
     }
 
@@ -58,5 +56,22 @@ class Tokenizer
         sort(self::$rawTokens);
 
         return self::$rawTokens;
+    }
+
+    /**
+     * Process initial tokens
+     * @param  string  $document
+     * @return array
+     */
+    public static function processTokens($document)
+    {
+        $document = strtolower($document);
+        $string = preg_replace('/[^a-z0-9 ]/', '', $document);
+        $string = preg_replace('/[0-9]/', ' ', $document);
+        $count = preg_match_all('/\w+/', $string, $matches);
+        if($count) {
+            return $matches[0];
+        }
+        return [];
     }
 }

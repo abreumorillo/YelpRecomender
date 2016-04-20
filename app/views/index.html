@@ -12,7 +12,7 @@
                     <div class="input-group input-group-lg">
                         <input type="text" class="form-control input-lg" placeholder="Search criteria" ng-enter="vm.search()" ng-model="vm.searchTerm" ng-model-options="{debounce: 50}" ng-keypress="vm.onKeyPressed($event)" id="searchTerm">
                         <div class="input-group-btn">
-                            <button type="button" ng-click="vm.search()" class="btn btn-danger btn-flat"><i class="fa fa-search fa-lg"></i></button>
+                            <button type="button" ng-click="vm.search()" ng-disabled="vm.isSearching" class="btn btn-danger btn-flat"><i class="fa  fa-lg" ng-class="{'fa-search': !vm.isSearching, 'fa-spinner fa-spin': vm.isSearching}"></i></button>
                         </div>
                     </div>
                     <span class="help-block nga-default nga-fast nga-rotate-up bold" ng-if="vm.terms.length > 0">Did you mean:

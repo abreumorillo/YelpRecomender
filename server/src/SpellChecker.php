@@ -5,20 +5,38 @@ namespace  YRS;
 /**
  * @purpose      : Class used to handle spelling correction using Levenshtein edit distance.
  * @courser      : Knowledge Processing Technologies
+ *
  * @author       : Group # 6
  */
 class SpellChecker
 {
-    private  $vocabulary = array();
+    private $vocabulary = array();
 
-    public function __construct()
+    private static $instance;
+
+    private function __construct()
     {
         $this->vocabulary = Tokenizer::getRawToken();
     }
 
     /**
-     * Check for spelling correction
-     * @param  string $token word to be checked for spelling correction
+     * Returns the *Singleton* instance of this class.
+     *
+     * @return Singleton The *Singleton* instance.
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
+
+    /**
+     * Check for spelling correction.
+     *
+     * @param string $token word to be checked for spelling correction
+     *
      * @return array
      */
     public function check($token)
@@ -37,9 +55,18 @@ class SpellChecker
             //We only consider pretty similar words and suggest a maximum of 3 words
             if ($distance < 2 && $suggestedCount < 3) {
                 $result[] = $word;
-                $suggestedCount++;
+                ++$suggestedCount;
             }
         }
+
         return  $result;
     }
+
+        /**
+         * Private clone method to prevent cloning of the instance of the
+         * *Singleton* instance.
+         */
+        private function __clone()
+        {
+        }
 }

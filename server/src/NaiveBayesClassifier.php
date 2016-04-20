@@ -119,15 +119,16 @@ class NaiveBayesClassifier
      * @param string Input string
      * @return array Features
      **/
-    public function tokenize($string) {
-        $tokens = array();
-        $string = strtolower($string);
-        $string = preg_replace('/[^a-z0-9 ]/', '', $string);
-        $string = preg_replace('/[0-9]/', ' ', $string);
-        $count = preg_match_all('/\w+/', $string, $matches);
-        // return $count ? $matches[0] : array();
+    public function tokenize($document) {
+        // $tokens = array();
+        // $document = strtolower($document);
+        // $document = preg_replace('/[^a-z0-9 ]/', '', $document);
+        // $document = preg_replace('/[0-9]/', ' ', $document);
+        // $count = preg_match_all('/\w+/', $document, $matches);
+        // // return $count ? $matches[0] : array();
+        $words = Tokenizer::processTokens($document);
         if($count) {
-            foreach ($matches[0] as $token) {
+            foreach ($words as $token) {
                 if(!in_array($token, $this->englishStopWords)){
                     $tokens[] = $token;
                 }

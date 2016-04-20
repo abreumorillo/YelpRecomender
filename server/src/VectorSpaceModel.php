@@ -14,6 +14,7 @@ namespace  YRS;
  */
 class VectorSpaceModel
 {
+    private static $instance;
     /**
      * Collection of documents.
      *
@@ -34,18 +35,6 @@ class VectorSpaceModel
      * @var int
      */
     private $numberOfDocuments = 0;
-
-    // /**
-    //  * index of term
-    //  * @var array
-    //  */
-    // private $termList;
-
-    // /**
-    //  * Postings list
-    //  * @var array
-    //  */
-    // private $docLists;
 
     /**
      * This array stores the restaurants objects, this objects are used to return useful information
@@ -81,11 +70,31 @@ class VectorSpaceModel
      *
      * @param array $docs
      */
-    public function __construct($docs)
+    private function __construct()
     {
-        $this->documents = $docs;
+        $parser = new Parser();
+        $this->documents = $parser->getDocuments();
         $this->buildIndex();
     }
+
+        /**
+         * Returns the *Singleton* instance of this class.
+         *
+         * @return Singleton The *Singleton* instance.
+         */
+        public static function getInstance()
+        {
+            $counter = 0;
+            // var_dump(self::$instance);
+
+            if (!isset(self::$instance)) {
+                self::$instance = new VectorSpaceModel;
+                // var_dump(self::$instance);
+                // var_dump($counter);
+                $counter++;
+            }
+            return self::$instance;
+        }
 
     /**
      * Build the index and calculate the TF-IDF.
@@ -106,7 +115,7 @@ class VectorSpaceModel
             $this->restaurants[$docId] = $doc;
 
             foreach ($tokens as $token) {
-                $token = PorterStemmer::Stem(strtolower($token)); //Tokenize search term
+                $token = PorterStemmer::Stem($token); //Tokenize search term
                 if (!isset($this->index[$token])) {
                     $this->index[$token] = array('df' => 0, 'postings' => array());
                 }
@@ -144,6 +153,7 @@ class VectorSpaceModel
     public function search($searchString)
     {
         $result = [];
+        $search = strtolower($searchString);
         $query = explode(' ', $searchString);
         foreach ($query as $term) {
             if (key_exists($term, $this->index)) {
@@ -181,10 +191,7 @@ class VectorSpaceModel
             $scoreHeap->next();
             ++$topResult;
         }
-
         return $result;
-    // self::debugResult($result);
-// self::debugResult($this->index);
     }
 
     /**
@@ -199,5 +206,13 @@ class VectorSpaceModel
         echo '<pre>';
         var_export($value);
         echo '</pre>';
+    }
+
+    /**
+     * Private clone method to prevent cloning of the instance of the
+     * *Singleton* instance.
+     */
+    private function __clone()
+    {
     }
 }
