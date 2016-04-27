@@ -48,6 +48,7 @@
                 .success(function(data, status) {
                     deferred.resolve({ data: data, status: status });
                 }).error(function(error, status) {
+                    console.log(error)
                     deferred.reject({ error: error, status: status });
                 });
             return deferred.promise;

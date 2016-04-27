@@ -11,7 +11,12 @@ var appInfo = {
 
     'use strict';
     //obtain the base url of the application
-    var baseUrl = location.protocol + "//" + location.host + '/index.php/';   //+ location.pathname;
+    var baseUrl = location.protocol + "//" + location.host +  location.pathname;
+
+    if(!location.pathname.includes('index')) {
+        console.log('path',location.pathname);
+        baseUrl += 'index.html';
+    }
 
     var appConfig = {
         baseUrl: baseUrl,

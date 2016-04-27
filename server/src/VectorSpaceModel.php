@@ -172,7 +172,7 @@ class VectorSpaceModel implements SaveToFileInterface
     public function search($searchString)
     {
         $result = [];
-        $search = strtolower($searchString);
+        $searchString = strtolower($searchString);
         $query = explode(' ', $searchString);
         $queryLength = 0.0;
 

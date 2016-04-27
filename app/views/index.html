@@ -27,7 +27,7 @@
             </div> -->
     <!-- /End search widget -->
     <!-- Result widget -->
-    <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult">
+    <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult  && vm.show">
         <!-- Result area -->
         <div class="row">
             <div class="col-xs-12">
@@ -75,7 +75,7 @@
         </div>
     </div>
     <!-- /End result widget    nga-default nga-default nga-slide-up nga-stagger-->
-    <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult && vm.show" >
+    <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult" >
         <div class="col-xs-12">
             <button class="btn btn-sm btn-danger pull-right close-btn" ng-click="vm.closeSearch()"><i class="fa fa-close fa-lg"></i> Close</button>
         </div>
