@@ -11,7 +11,8 @@ var appInfo = {
 
     'use strict';
     //obtain the base url of the application
-    var baseUrl = location.protocol + "//" + location.host + location.pathname;
+    var baseUrl = location.protocol + "//" + location.host + '/index.php/';   //+ location.pathname;
+
     var appConfig = {
         baseUrl: baseUrl,
         cookieName: 'frdUserInfo'

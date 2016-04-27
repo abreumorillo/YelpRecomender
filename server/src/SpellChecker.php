@@ -8,28 +8,44 @@ namespace  YRS;
  *
  * @author       : Group # 6
  */
-class SpellChecker
+class SpellChecker implements SaveToFileInterface
 {
+    /**
+     * Store vocabulary.
+     *
+     * @var array
+     */
     private $vocabulary = array();
 
-    private static $instance;
-
-    private function __construct()
+    /**
+     * Initializes the vocabulary.
+     */
+    public function __construct($dictionary = array())
     {
-        $this->vocabulary = Tokenizer::getRawToken();
+
+        if (file_exists(SaveToFileInterface::SPELLING_CORRECTION_FILE_NAME)) {
+            $this->initialize();
+        }
+        $this->vocabulary = $dictionary;
+        $this->saveDataToFile();
     }
 
-    /**
-     * Returns the *Singleton* instance of this class.
-     *
-     * @return Singleton The *Singleton* instance.
-     */
-    public static function getInstance()
+    public function saveDataToFile()
     {
-        if (null === static::$instance) {
-            static::$instance = new static();
-        }
-        return static::$instance;
+        $dataToSave['vocabulary'] = $this->vocabulary;
+        $jsonData = json_encode($dataToSave);
+        file_put_contents(SaveToFileInterface::SPELLING_CORRECTION_FILE_NAME, $jsonData);
+    }
+    public function getDataFromFile()
+    {
+        $dataFromFile = json_decode(file_get_contents(SaveToFileInterface::SPELLING_CORRECTION_FILE_NAME));
+        var_dump($dataFromFile);
+        $this->vocabulary = json_decode(json_encode($dataFromFile->vocabulary), true);//$indexFromFile->index;
+    }
+
+    public function initialize($tokens = array())
+    {
+        $this->getDataFromFile();
     }
 
     /**
@@ -61,12 +77,4 @@ class SpellChecker
 
         return  $result;
     }
-
-        /**
-         * Private clone method to prevent cloning of the instance of the
-         * *Singleton* instance.
-         */
-        private function __clone()
-        {
-        }
 }

@@ -15,12 +15,20 @@ namespace YRS;
 class Tokenizer
 {
     /**
-     * Regex for splitting the document //old //"/[\s\"\.,:;&%~^+\(\)\$#!\?\/\\\-]+/";.
+     * Raw token for spelling correction vocabulary.
      *
-     * @var string
+     * @var array
      */
-    // private static $splitRegex = "/[\s\"\.,:;&%~^+$\(\)\$#!\?\/\\\-]+/";
     private static $rawTokens = array();
+
+    private static $stemmedTokens = array();
+
+    /**
+     * Class initializer.
+     */
+    public function __construct()
+    {
+    }
 
     /**
      * This method get the stemmed tokens from a given document.
@@ -31,24 +39,35 @@ class Tokenizer
      */
     public static function getTokens($document)
     {
+        $result = [];
         $tokens = self::processTokens($document);
-        foreach ($tokens as $id => $token) {
+        $stopWords = EnglishStopWords::get();
+        ProjectStatistic::setEnglishStopWordsCount(count($stopWords));
+        foreach ($tokens as $token) {
             if (strlen($token) > 0) {
-                $tokens[$id] = PorterStemmer::Stem($tokens[$id]); //Apply the stemmer to each term.
-                //Add to raw tokens array for spelling correction.
-                if (!in_array($token, self::$rawTokens)) { // && strlen($token) > 1
+                $stemmedToken = PorterStemmer::Stem($token);
+
+                if (!in_array($stemmedToken, $stopWords)) { //skip stopwords
+                    $result[] = $stemmedToken;
+                    if (!in_array($stemmedToken, self::$stemmedTokens)) {
+                        self::$stemmedTokens[] = $stemmedToken;
+                    }
+                }
+
+                // Add to raw tokens array for spelling correction.
+                if (!in_array($token, self::$rawTokens)) {
                     self::$rawTokens[] = $token;
                 }
-            } else {
-                unset($tokens[$id]);
             }
         }
-        return $tokens;
+
+        return $result;
     }
 
     /**
      * Get the raw tokens for building dictionary, the purpose of the dictionary is to be used
-     * for spelling correction
+     * for spelling correction.
+     *
      * @return array
      */
     public static function getRawToken()
@@ -58,9 +77,21 @@ class Tokenizer
         return self::$rawTokens;
     }
 
+    public static function getVocabularySize()
+    {
+        return count(self::$rawTokens);
+    }
+
+    public static function getTokensCount()
+    {
+        return count(self::$stemmedTokens);
+    }
+
     /**
-     * Process initial tokens
-     * @param  string  $document
+     * Process initial tokens.
+     *
+     * @param string $document
+     *
      * @return array
      */
     public static function processTokens($document)
@@ -69,9 +100,10 @@ class Tokenizer
         $string = preg_replace('/[^a-z0-9 ]/', '', $document);
         $string = preg_replace('/[0-9]/', ' ', $document);
         $count = preg_match_all('/\w+/', $string, $matches);
-        if($count) {
+        if ($count) {
             return $matches[0];
         }
+
         return [];
     }
 }

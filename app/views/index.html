@@ -1,18 +1,16 @@
 <div ng-if="!vm.isShowingDetails">
-    <br>
-    <br>
     <!-- Search Widget -->
-    <div class="box box-danger nga-default nga-slide-up" ng-if="!vm.isSearchResult">
+    <div class="box box-danger nga-default nga-slide-up padding-botton" ng-if="!vm.isSearchResult">
         <div class="box-body">
             <h1 class="page-lead text-center"><span class="yelp-logo">Y</span>elp <span class="yelp-logo">R</span>estaurant <span class="yelp-logo">F</span>inder </h1>
-            <p class="text-center">Search for restaurants.</p>
+            <p class="text-center yelp-logo-small">Search for restaurants.</p>
             <br>
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
                     <div class="input-group input-group-lg">
-                        <input type="text" class="form-control input-lg" placeholder="Search criteria" ng-enter="vm.search()" ng-model="vm.searchTerm" ng-model-options="{debounce: 50}" ng-keypress="vm.onKeyPressed($event)" id="searchTerm">
+                        <input type="text" class="form-control input-lg" placeholder="Search criteria" ng-enter="vm.search()" ng-model="vm.searchTerm" ng-model-options="{debounce: 50}" ng-keypress="vm.onKeyPressed($event)" id="searchTerm" ng-disabled="vm.isSearching">
                         <div class="input-group-btn">
-                            <button type="button" ng-click="vm.search()" ng-disabled="vm.isSearching" class="btn btn-danger btn-flat"><i class="fa  fa-lg" ng-class="{'fa-search': !vm.isSearching, 'fa-spinner fa-spin': vm.isSearching}"></i></button>
+                            <button type="button" ng-click="vm.search()" ng-disabled="vm.isSearching || vm.searchTerm.length <= 2" class="btn btn-danger btn-flat"><i class="fa  fa-lg" ng-class="{'fa-search': !vm.isSearching, 'fa-spinner fa-spin': vm.isSearching}"></i></button>
                         </div>
                     </div>
                     <span class="help-block nga-default nga-fast nga-rotate-up bold" ng-if="vm.terms.length > 0">Did you mean:
@@ -22,17 +20,12 @@
                     </span>
                 </div>
             </div>
-            <div class="overlay" ng-if="vm.isSearching">
-                <i class="fa fa-refresh text-blue fa-spin"></i>
-            </div>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
     </div>
+    <!--                 <div class="overlay" ng-if="vm.isSearching">
+                <i class="fa fa-refresh text-blue fa-spin"></i>
+            </div> -->
+    <!-- /End search widget -->
     <!-- Result widget -->
     <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult">
         <!-- Result area -->
@@ -64,7 +57,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="restaurant in vm.restaurants" class="nga-default nga-stagger nga-slide-left">
+                                <tr ng-repeat="restaurant in vm.restaurants" class="nga-default nga-stagger nga-slide-left" ng-click="vm.getRestaurantDetails(restaurant)">
                                     <td>{{restaurant.businessName}}</td>
                                     <td>{{restaurant.businessCity}}</td>
                                     <td>{{restaurant.businessState}}</td>
@@ -81,6 +74,59 @@
             </div>
         </div>
     </div>
-</div>
+    <!-- /End result widget    nga-default nga-default nga-slide-up nga-stagger-->
+    <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult && vm.show" >
+        <div class="col-xs-12">
+            <button class="btn btn-sm btn-danger pull-right close-btn" ng-click="vm.closeSearch()"><i class="fa fa-close fa-lg"></i> Close</button>
+        </div>
+        <div ng-repeat="restaurant in vm.restaurants">
+            <div class="col-xs-6">
+                <div class="box" ng-class="vm.getBoxClass(restaurant.class)">
+                    <div class="box-header">
+                        <h3 class="box-title no-margin-padding pointer" ng-click="vm.getRestaurantDetails(restaurant)">
+                        <i class="fa" ng-class="vm.getBoxTitleClass(restaurant.class)"></i>
+                        <span ng-bind="restaurant.businessName"></span></h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool"><i class="fa fa-list fa-lg fa-bold"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <p class="no-margin-padding">
+                            <span class="bold">City: </span> <span>{{restaurant.businessCity|titlecase}}</span> |
+                            <span class="bold">State: </span> <span>{{restaurant.businessState|uppercase}}</span>
+                        </p>
+                        <p class="no-margin-padding"><span class="bold">Review: </span> {{restaurant.content | truncate:70}}</p>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- ./detail template -->
+<div class="box box-danger nga-slow nga-stagger nga-slide-up" ng-if="vm.isShowingDetails">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-th-list fa-lg text-muted"></i> <span ng-bind="vm.restaurantDetails.name"></span> | Aditional Informations</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-success btn-sm" ng-click="vm.closeDetails()"><i class="fa fa-arrow-left"></i> Back</button>
+        </div>
+    </div>
+    <div class="box-body">
+    <div class="col-xs-6">
+        <p>other info here</p>
+    </div>
+        <div class="col-xs-6">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title pull-left"><i class="fa fa-map-marker text-red"></i> Map</h3>
+                </div>
+                <div class="box-body no-padding">
+                    <div id="map-canvas" style="height:350px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

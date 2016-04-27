@@ -2,10 +2,23 @@
 
 namespace  YRS;
 
-class NaiveBayesClassifier
+/**
+ * @purpose     : This class implements the Naive Bayes algorithm for classifying reviews.
+ * we are using three classes : Excellent, Good and Bad.
+ * @course      : Knowledge Processing Technologies
+ *
+ * @author      : Team #6
+ */
+class NaiveBayesClassifier implements SaveToFileInterface
 {
 
-    protected  $englishStopWords = array();
+    /**
+     * English stopwords list.
+     *
+     * @var array
+     */
+    protected $englishStopWords = array();
+
     /**
      * @var array Classification subjects e.g. positive, negative
      **/
@@ -24,15 +37,67 @@ class NaiveBayesClassifier
     protected $total_tokens = 0;
 
     /**
+     * Parser instance.
+     *
+     * @var Parser
+     */
+    private $parser;
+    /**
      * Constructor.
      *
      * @param Tokenizer
      **/
     public function __construct()
     {
-        //Get the english stop words
+        if(file_exists(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME)) {
+            $this->getDataFromFile();
+            return;
+        }
+
         $this->englishStopWords = EnglishStopWords::get();
-    } // end func: __construct
+        $this->parser = new Parser();
+
+    }
+
+    public function saveDataToFile()
+    {
+        $dataToSave['totalSamples'] = $this->total_samples;
+        $dataToSave['subjects'] = $this->subjects;
+        $dataToSave['tokens'] = $this->tokens;
+        $dataToSave['totalTokens'] = $this->total_tokens;
+
+        $jsonData = json_encode($dataToSave);
+
+        file_put_contents(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME, $jsonData);
+    }
+
+
+    public function getDataFromFile()
+    {
+        $dataFromFile = json_decode(file_get_contents(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME));
+
+        $this->subjects = json_decode(json_encode($dataFromFile->subjects), true);
+        $this->tokens = json_decode(json_encode($dataFromFile->tokens), true);
+        $this->total_samples = $dataFromFile->totalSamples;
+        $this->total_tokens = $dataFromFile->totalTokens;
+
+    }
+
+    /**
+     * Train the classifier using the documents stored in the train folder.
+     *
+     * @return mix
+     */
+    public function trainClassifier()
+    {
+        $trainingDocuments = $this->parser->getTrainDocuments();
+        foreach ($trainingDocuments as $class => $document) {
+            $this->train($class, $document);
+        }
+        //Save data to file
+        $this->saveDataToFile();
+    }
+
     /**
      * Train this Classifier with one or more rows.
      *
@@ -46,7 +111,7 @@ class NaiveBayesClassifier
                 'count_samples' => 0,
                 'count_tokens' => 0,
                 'prior_value' => null,
-            );
+                );
         }
         if (empty($rows)) {
             return $this;
@@ -67,7 +132,8 @@ class NaiveBayesClassifier
                 ++$this->total_tokens;
             }
         }
-    } // end func: train
+    }
+
     /**
      * Classify a given string.
      *
@@ -107,33 +173,34 @@ class NaiveBayesClassifier
         arsort($scores);
 
         return $scores;
-    } // end func: classify
-
+    }
 
     /**
-     * Tokenize a string
+     * Tokenize a string.
      *
      * Given a string, return an array of features to be
      * used for classification, it removes english stop words.
      *
      * @param string Input string
+     *
      * @return array Features
      **/
-    public function tokenize($document) {
-        // $tokens = array();
-        // $document = strtolower($document);
-        // $document = preg_replace('/[^a-z0-9 ]/', '', $document);
-        // $document = preg_replace('/[0-9]/', ' ', $document);
-        // $count = preg_match_all('/\w+/', $document, $matches);
-        // // return $count ? $matches[0] : array();
+    public function tokenize($document)
+    {
         $words = Tokenizer::processTokens($document);
-        if($count) {
-            foreach ($words as $token) {
-                if(!in_array($token, $this->englishStopWords)){
-                    $tokens[] = $token;
-                }
+        foreach ($words as $token) {
+            if (!in_array($token, $this->englishStopWords)) {
+                $tokens[] = $token;
             }
         }
+
         return $tokens;
     } // end func: tokenize
-} // end class: Classifier
+
+    public function getClass($group)
+    {
+        $max = max($group);
+
+        return array_keys($group, $max)[0];
+    }
+}

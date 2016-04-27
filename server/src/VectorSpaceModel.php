@@ -12,9 +12,9 @@ namespace  YRS;
  *
  *@see             : Parser.php, Tokenizer.php, Document.php
  */
-class VectorSpaceModel
+class VectorSpaceModel implements SaveToFileInterface
 {
-    private static $instance;
+
     /**
      * Collection of documents.
      *
@@ -65,36 +65,52 @@ class VectorSpaceModel
      */
     const TOP_RESULT = 10;
 
+    private $classifier;
+
     /**
      * Build the index.
      *
      * @param array $docs
      */
-    private function __construct()
+    public function __construct()
     {
+        if(file_exists(SaveToFileInterface::INDEX_FILE_NAME)) {
+            $this->getDataFromFile();
+            $this->classifier = new NaiveBayesClassifier;
+            return;
+        }
         $parser = new Parser();
+        $this->classifier = new NaiveBayesClassifier;
+        $this->classifier->trainClassifier();
         $this->documents = $parser->getDocuments();
         $this->buildIndex();
+        $this->saveDataToFile();
     }
 
-        /**
-         * Returns the *Singleton* instance of this class.
-         *
-         * @return Singleton The *Singleton* instance.
-         */
-        public static function getInstance()
-        {
-            $counter = 0;
-            // var_dump(self::$instance);
+    public function saveDataToFile()
+    {
+        $dataToSave['index'] = $this->index;
+        $dataToSave['restaurants'] = $this->restaurants;
+        $dataToSave['docLength'] = $this->docLength;
+        $dataToSave['scores'] = $this->scores;
+        $dataToSave['numberOfDocuments'] = $this->numberOfDocuments;
 
-            if (!isset(self::$instance)) {
-                self::$instance = new VectorSpaceModel;
-                // var_dump(self::$instance);
-                // var_dump($counter);
-                $counter++;
-            }
-            return self::$instance;
-        }
+        $jsonIndex = json_encode($dataToSave);
+
+        file_put_contents(SaveToFileInterface::INDEX_FILE_NAME, $jsonIndex);
+    }
+
+    public function getDataFromFile()
+    {
+        $indexFromFile = json_decode(file_get_contents(SaveToFileInterface::INDEX_FILE_NAME));
+
+        $this->index = json_decode(json_encode($indexFromFile->index), true);//$indexFromFile->index;
+        $this->restaurants = $indexFromFile->restaurants;//json_decode(json_encode($indexFromFile->restaurants),true);
+        $this->docLength = json_decode(json_encode($indexFromFile->docLength), true);
+        $this->scores = json_decode(json_encode($indexFromFile->scores), true);
+        $this->numberOfDocuments = $indexFromFile->numberOfDocuments;
+
+    }
 
     /**
      * Build the index and calculate the TF-IDF.
@@ -106,16 +122,15 @@ class VectorSpaceModel
         $docCount = array();
         foreach ($this->documents as $docId => $doc) {
             //Get the tokens for each document, as part of the token normalization process we do stemming and casefolding @see Tokenizer
-            $tokens = Tokenizer::getTokens($doc->content);
+            $document = "$doc->content $doc->businessName"; //Appending review and business name
+            $tokens = Tokenizer::getTokens($document);
             //As in PHP array are dinamic we need to initialize the length of each document and scores with zero, otherwise we will get error calculating the length of the document, we would get Undefined offset: N, where N is the document.
             $this->docLength[$docId] = 0;
             $this->scores[$docId] = 0;
-            //$docCount[$docId] = count($tokens);
             ++$this->numberOfDocuments;
             $this->restaurants[$docId] = $doc;
 
             foreach ($tokens as $token) {
-                $token = PorterStemmer::Stem($token); //Tokenize search term
                 if (!isset($this->index[$token])) {
                     $this->index[$token] = array('df' => 0, 'postings' => array());
                 }
@@ -127,20 +142,24 @@ class VectorSpaceModel
             }
         }
 
+        //Add token count information to statistic class
+        ProjectStatistic::setTokenCount(Tokenizer::getTokensCount());
+        ProjectStatistic::setSpellingVocabularySize(Tokenizer::getVocabularySize());
+
+        new SpellChecker(Tokenizer::getRawToken());
+
         //Calculate the TF-IDF and partial calculation of the document length
         foreach ($this->index as $token => $postingsList) {
             foreach ($postingsList['postings'] as $docId => $document) {
-                $tfidf = (1 + log10($document['tw'])) * log10($this->numberOfDocuments / floatval($postingsList['df']));
+                $tfidf = (1 + log($document['tw'])) * log(floatval($this->numberOfDocuments) / floatval($postingsList['df']));
                 $this->docLength[$docId] += pow($tfidf, 2); //First part of the document length calculation
                 $this->index[$token]['postings'][$docId]['tw'] = $tfidf;
             }
         }
-
         // Compute the actual document length  |x|=sqrt(x_a^2 + x_b^2 + x_n^2).
         foreach ($this->docLength as $docId => $length) {
             $this->docLength[$docId] = sqrt($length);
         }
-        // self::debugResult($this->docLength);
     }
 
     /**
@@ -155,29 +174,43 @@ class VectorSpaceModel
         $result = [];
         $search = strtolower($searchString);
         $query = explode(' ', $searchString);
+        $queryLength = 0.0;
+
+
         foreach ($query as $term) {
+            $term = PorterStemmer::Stem($term);
             if (key_exists($term, $this->index)) {
                 $entry = $this->index[$term];
-                $queryTfIdf = log10(floatval($this->numberOfDocuments) / floatval($entry['df']));//(1+log10(1)) * log10($this->numberOfDocuments/floatval($entry['df']));
+                $queryTfIdf = log(floatval($this->numberOfDocuments) / floatval($entry['df']));
+                $queryLength += pow($queryTfIdf, 2);
                 foreach ($entry['postings'] as $docId => $posting) {
                     $this->scores[$docId] += $queryTfIdf * $posting['tw'];
                 }
             }
         }
 
+        //calculating  query length, if no length we return an empty array
+        $queryLength = sqrt($queryLength);
+        if ($queryLength <= 0.0) {
+            return $result;
+        }
+
+
         /*
          * We use a heap datastructure for retrieven top K documents
          * @var SearchScoreHeap
          */
         $scoreHeap = new SearchScoreHeap();
+
         foreach ($this->scores as $docId => $score) {
-            $normalizedScore = $score / $this->docLength[$docId];
+            $normalizedScore = $score  / ($queryLength * $this->docLength[$docId]); //Full normalization
             $this->scores[$docId] = $normalizedScore;
             $scoreHeap->insert([$docId => $normalizedScore]);
         }
 
         $scoreHeap->top();
         $topResult = 0;
+
         // Retrieving the top k document order by score, documents are returned in descending order
         while ($scoreHeap->valid() && $topResult < self::TOP_RESULT) {
             $value = $scoreHeap->current();
@@ -191,28 +224,14 @@ class VectorSpaceModel
             $scoreHeap->next();
             ++$topResult;
         }
+
+        foreach ($result as $document) {
+            $group = $this->classifier->classify($document->content);
+            $class = $this->classifier->getClass($group);
+            $document->classProbability = $group;
+            $document->class = $class;
+        }
+
         return $result;
-    }
-
-    /**
-     * Function use for debuggin purpose.
-     *
-     * @param string $value
-     *
-     * @return mix
-     */
-    public static function debugResult($value = '')
-    {
-        echo '<pre>';
-        var_export($value);
-        echo '</pre>';
-    }
-
-    /**
-     * Private clone method to prevent cloning of the instance of the
-     * *Singleton* instance.
-     */
-    private function __clone()
-    {
     }
 }

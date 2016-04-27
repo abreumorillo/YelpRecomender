@@ -16,6 +16,7 @@
     function IndexService($http, $q, appConfig) {
         var baseUrl = appConfig.baseUrl;
         var serviceUrl = baseUrl + 'api/restaurants/{searchString}';
+
         var URL = {
             RESTAURANT_SEARCH: baseUrl + 'api/restaurants/{searchString}',
             SPELLCHECKER: baseUrl + 'api/spellchecker/{term}'
@@ -38,7 +39,6 @@
             var url = URL.RESTAURANT_SEARCH.replace('{searchString}', searchString);
             $http.get(url)
                 .success(function(data, status) {
-                    console.log(data, status);
                     deferred.resolve({
                         data: data,
                         status: status

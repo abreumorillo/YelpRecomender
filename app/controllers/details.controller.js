@@ -28,7 +28,7 @@
          */
         function activate() {
             // getMovieDetails();
-            // console.log('activated', $stateParams);
+            console.log('activated', $stateParams);
             // console.log(YelpService);
             var restaurant = $stateParams.restaurant;
             var location = $stateParams.city + ', '+ $stateParams.state;

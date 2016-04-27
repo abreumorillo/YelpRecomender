@@ -12,13 +12,6 @@ namespace YRS;
 class Parser
 {
     /**
-     * Root directory where documents are stored.
-     *
-     * @var string
-     */
-    private static $documentFolder = 'data/';
-
-    /**
      * Array for storing parsed documents.
      *
      * @var array
@@ -30,7 +23,7 @@ class Parser
      */
     public function __construct()
     {
-        $this->parse();
+        // $this->parse();
     }
 
     /**
@@ -55,6 +48,50 @@ class Parser
      */
     public function getDocuments()
     {
+        $this->parse();
+
         return $this->documents;
+    }
+
+    /**
+     * Gets the training documents.
+     *
+     * @return array
+     */
+    public function getTrainDocuments()
+    {
+        $trainData = [];
+        foreach (glob('classifier_data/train/*.txt') as $file) {
+            if (strpos($file, 'excellent')) {
+                $trainData['Excellent'] = file_get_contents($file);
+            } elseif (strpos($file, 'good')) {
+                $trainData['Good'] = file_get_contents($file);
+            } else {
+                $trainData['Bad'] = file_get_contents($file);
+            }
+        }
+
+        return $trainData;
+    }
+
+    /**
+     * Gets the documents for testing.
+     *
+     * @return array
+     */
+    public function getTestingDocuments()
+    {
+        $testData = [];
+        foreach (glob('classifier_data/test/*.txt') as $file) {
+            if (strpos($file, 'excellent')) {
+                $testData['Excellent'] = file_get_contents($file);
+            } elseif (strpos($file, 'good')) {
+                $testData['Good'] = file_get_contents($file);
+            } else {
+                $testData['Bad'] = file_get_contents($file);
+            }
+        }
+
+        return $testData;
     }
 }

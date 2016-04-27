@@ -1009,10 +1009,29 @@ strong {
 .yelp-logo {
     /*color: #dd4b39;*/
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.4em;
     font-family: 'Tangerine', cursive;
 }
 
 .bold {
     font-weight: bold;
+}
+
+.yelp-logo-small {
+    font-family: 'Tangerine', cursive;
+    font-size: 30px;
+}
+
+.padding-botton {
+    padding-bottom: 10%;
+}
+
+.no-margin-padding {
+    padding: 0;
+    margin: 0;
+}
+
+.close-btn {
+    padding-bottom: 5px;
+    margin-bottom: 3px;
 }

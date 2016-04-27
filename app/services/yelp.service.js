@@ -23,14 +23,15 @@
             for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
             return result;
         }
-//http://stackoverflow.com/questions/23716264/yelp-api-and-angularjs
+        //http://stackoverflow.com/questions/23716264/yelp-api-and-angularjs
         function _getRestaurants(restaurant, location) {
+            var deferred = $q.defer();
             var method = 'GET';
             var url = 'http://api.yelp.com/v2/search';
             var params = {
                 callback: 'angular.callbacks._0',
                 location: location,
-                limit:1,
+                limit: 1,
                 oauth_consumer_key: 'RMYRv43d5ynnmxOqZ5x61g', //Consumer Key
                 oauth_token: 'dMWcn5yCF5A1Xz56YZeAW-kpKYyw9nAy', //Token
                 oauth_signature_method: "HMAC-SHA1",
@@ -43,9 +44,13 @@
             var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, { encodeSignature: false });
             params['oauth_signature'] = signature;
 
-            $http.jsonp(url, { params: params }).success(function (data, status) {
-                console.log(data);
-            });
+            $http.jsonp(url, { params: params })
+                .success(function(data, status) {
+                    deferred.resolve({ data: data, status: status });
+                }).error(function(error, status) {
+                    deferred.reject({ error: error, status: status });
+                });
+            return deferred.promise;
         }
 
     }
