@@ -7,7 +7,7 @@
 
     function StatisticService($http, $q, appConfig) {
 
-        var serviceUrl = appConfig.baseUrl + 'api/getStatistics';
+        var serviceUrl = appConfig.baseUrl + '/api/getStatistics';
         var service = {
             get: _get
         };

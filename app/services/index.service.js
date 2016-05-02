@@ -15,11 +15,11 @@
     /* @ngInject */
     function IndexService($http, $q, appConfig) {
         var baseUrl = appConfig.baseUrl;
-        var serviceUrl = baseUrl + 'api/restaurants/{searchString}';
+        var serviceUrl = baseUrl + '/api/restaurants/{searchString}';
 
         var URL = {
-            RESTAURANT_SEARCH: baseUrl + 'api/restaurants/{searchString}',
-            SPELLCHECKER: baseUrl + 'api/spellchecker/{term}'
+            RESTAURANT_SEARCH: baseUrl + '/api/restaurants/{searchString}',
+            SPELLCHECKER: baseUrl + '/api/spellchecker/{term}'
         };
         var service = {
             getRestaurants: _getRestaurants,
