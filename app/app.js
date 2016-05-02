@@ -11,11 +11,15 @@ var appInfo = {
 
     'use strict';
     //obtain the base url of the application
-    var baseUrl = location.protocol + "//" + location.host + '/index.php/';   //+ location.pathname;
+
+    var baseUrl = location.protocol + "//" + location.host + location.pathname;
+    if (!location.pathname.includes('index')) {
+        baseUrl += 'index.html';
+    }
 
     var appConfig = {
         baseUrl: baseUrl,
-        cookieName: 'frdUserInfo'
+        cookieName: 'yfUserInfo'
     };
 
     angular
@@ -25,11 +29,7 @@ var appInfo = {
             'ngMessages', //Output Error Messages
             'toastr', //Angular module for providing a message functionality -  https://github.com/Foxandxss/angular-toastr
             'ngSanitize',
-            'ui.bootstrap.typeahead'
-            //'angular-loading-bar', //Display loading bar when XHR request are fired
-            // 'ui.bootstrap.pagination' //Bootstrap component for pagination
-            // 'ui.bootstrap.popover',
-            // 'ui.bootstrap.modal'
+            'ui.bootstrap.modal'
         ])
         .config(['$compileProvider', function($compileProvider) {
             $compileProvider.debugInfoEnabled(false); //false for production
@@ -50,7 +50,5 @@ var appInfo = {
                 preventOpenDuplicates: true,
             });
         });
-    // .run(['AuthService', function(AuthService) {
-    //     AuthService.logOut();
-    // }]);
+
 })();

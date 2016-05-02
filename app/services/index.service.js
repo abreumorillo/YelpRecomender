@@ -36,7 +36,7 @@
          */
         function _getRestaurants(searchString) {
             var deferred = $q.defer();
-            var url = URL.RESTAURANT_SEARCH.replace('{searchString}', searchString);
+            var url = URL.RESTAURANT_SEARCH.replace('{searchString}', searchString).replace('html', 'php');
             $http.get(url)
                 .success(function(data, status) {
                     deferred.resolve({
@@ -61,7 +61,7 @@
          */
         function _spellCheck(word) {
             var deferred = $q.defer();
-            var url = URL.SPELLCHECKER.replace('{term}', word);
+            var url = URL.SPELLCHECKER.replace('{term}', word).replace('html', 'php');
             $http.get(url)
                 .success(function(data, status) {
                     deferred.resolve({

@@ -1,6 +1,9 @@
 <div ng-if="!vm.isShowingDetails">
     <!-- Search Widget -->
     <div class="box box-danger nga-default nga-slide-up padding-botton" ng-if="!vm.isSearchResult">
+        <div class="overlay nga-slow nga-stagger nga-collapse" ng-if="vm.isSearching">
+            <i class="fa fa-refresh text-blue fa-spin"></i>
+        </div>
         <div class="box-body">
             <h1 class="page-lead text-center"><span class="yelp-logo">Y</span>elp <span class="yelp-logo">R</span>estaurant <span class="yelp-logo">F</span>inder </h1>
             <p class="text-center yelp-logo-small">Search for restaurants.</p>
@@ -22,12 +25,9 @@
             </div>
         </div>
     </div>
-    <!--                 <div class="overlay" ng-if="vm.isSearching">
-                <i class="fa fa-refresh text-blue fa-spin"></i>
-            </div> -->
     <!-- /End search widget -->
     <!-- Result widget -->
-    <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult">
+    <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult  && vm.show">
         <!-- Result area -->
         <div class="row">
             <div class="col-xs-12">
@@ -64,7 +64,6 @@
                                     <td>{{restaurant.fileName}}</td>
                                     <td>{{restaurant.score}}</td>
                                     <td>
-                                        <button uib-popover="Details" popover-placement="left" popover-trigger="mouseenter" class="btn btn-primary btn-xs pull-right"><i class="fa fa-list"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -75,9 +74,9 @@
         </div>
     </div>
     <!-- /End result widget    nga-default nga-default nga-slide-up nga-stagger-->
-    <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult && vm.show" >
+    <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult">
         <div class="col-xs-12">
-            <button class="btn btn-sm btn-danger pull-right close-btn" ng-click="vm.closeSearch()"><i class="fa fa-close fa-lg"></i> Close</button>
+            <button class="btn btn-sm btn-danger close-btn" ng-click="vm.closeSearch()"><i class="fa fa-close fa-lg"></i> Close</button>
         </div>
         <div ng-repeat="restaurant in vm.restaurants">
             <div class="col-xs-6">
@@ -87,19 +86,18 @@
                         <i class="fa" ng-class="vm.getBoxTitleClass(restaurant.class)"></i>
                         <span ng-bind="restaurant.businessName"></span></h3>
                         <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool"><i class="fa fa-list fa-lg fa-bold"></i>
+                            <button type="button" class="btn btn-box-tool" ng-click="vm.showAdditionalInfo(restaurant)"><i class="fa fa-list fa-lg fa-bold"></i>
                             </button>
                         </div>
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body">
+                    <div class="box-body nga-default nga-stagger-slow nga-rotate-down">
                         <p class="no-margin-padding">
                             <span class="bold">City: </span> <span>{{restaurant.businessCity|titlecase}}</span> |
                             <span class="bold">State: </span> <span>{{restaurant.businessState|uppercase}}</span>
                         </p>
                         <p class="no-margin-padding"><span class="bold">Review: </span> {{restaurant.content | truncate:70}}</p>
                     </div>
-                    <!-- /.box-body -->
                 </div>
             </div>
         </div>
@@ -107,18 +105,46 @@
 </div>
 <!-- ./detail template -->
 <div class="box box-danger nga-slow nga-stagger nga-slide-up" ng-if="vm.isShowingDetails">
-    <div class="box-header with-border">
+    <div class="box-header">
         <h3 class="box-title"><i class="fa fa-th-list fa-lg text-muted"></i> <span ng-bind="vm.restaurantDetails.name"></span> | Aditional Informations</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-success btn-sm" ng-click="vm.closeDetails()"><i class="fa fa-arrow-left"></i> Back</button>
         </div>
     </div>
-    <div class="box-body">
-    <div class="col-xs-6">
-        <p>other info here</p>
-    </div>
+    <div class="box-body no-padding">
+    <br>
+        <!-- Bussiness information -->
         <div class="col-xs-6">
-            <div class="box box-info">
+            <div class="box box-default">
+                <div class="box-header">
+                    <h3 class="box-title pull-left"><i class="fa fa-yelp fa-spin text-red"></i></h3>
+                </div>
+                <div class="box-body no-padding">
+                    <table class="table table-responsive">
+                    <tr>
+                        <th class="bold" style="width: 35%;"><i class="fa fa-phone text-red" aria-hidden="true"></i> Phone Number</th>
+                        <td>{{vm.restaurantDetails.phone}}</td>
+                    </tr>
+                    <tr>
+                        <th class="bold"><i class="fa fa-map-marker text-red" aria-hidden="true"></i> Address</th>
+                        <td>
+                            <p ng-repeat="address in vm.restaurantDetails.address">{{address}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bold"><i class="fa fa-sun-o text-red" aria-hidden="true"></i> Categories</th>
+                        <td>
+                            <p class="" ng-repeat="category in vm.restaurantDetails.categories">{{category}}</p>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /end bussiness information -->
+        <!-- Google map -->
+        <div class="col-xs-6">
+            <div class="box box-default">
                 <div class="box-header">
                     <h3 class="box-title pull-left"><i class="fa fa-map-marker text-red"></i> Map</h3>
                 </div>
@@ -128,5 +154,23 @@
                 </div>
             </div>
         </div>
+        <!-- /end google map -->
     </div>
 </div>
+<!-- Modal template -->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h4 class="modal-title"><i class="fa fa-cutlery text-danger" aria-hidden="true"></i> <span class="bold">{{restaurant.businessName}}</span></h4>
+    </div>
+    <div class="modal-body">
+        <div class="callout" ng-class="{'callout-danger': restaurant.class === 'Bad', 'callout-warning': restaurant.class === 'Good', 'callout-info': restaurant.class === 'Excellent'}">
+            <p>{{restaurant.content}}</p>
+        </div>
+        <h3 class="text-center">Class Probabilty</h3>
+        <p class="text-center text-muted"><span class="bold">Excellent: </span> <span>{{getPercentage(restaurant.classProbability.Excellent)}}%</span>| <span class="bold">Good: </span> <span>{{getPercentage(restaurant.classProbability.Good)}}%</span> | <span class="bold">Bad: </span> <span>{{getPercentage(restaurant.classProbability.Bad)}}%</span></p>
+        <p class="text-center"><span class="bold">Class: </span> {{restaurant.class}}</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="button" ng-click="ok()"><i class="fa fa-check"></i> OK</button>
+    </div>
+</script>

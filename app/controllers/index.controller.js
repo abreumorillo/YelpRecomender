@@ -5,16 +5,16 @@
         .module(appInfo.module)
         .controller('IndexController', IndexController);
 
-    IndexController.$inject = ['CommonService', 'toastr', 'IndexService', 'focus', '$timeout', 'YelpService'];
+    IndexController.$inject = ['CommonService', 'toastr', 'IndexService', 'focus', '$timeout', 'YelpService', '$uibModal'];
 
     /* @ngInject */
-    function IndexController(CommonService, toastr, IndexService, focus, $timeout, YelpService) {
+    function IndexController(CommonService, toastr, IndexService, focus, $timeout, YelpService, $uibModal) {
         var vm = this,
             geocoder,
             map = null,
             marker,
             mapOptions = { //map option for google map
-                zoom: 16
+                zoom: 18
             };
 
         vm.title = 'IndexController';
@@ -30,7 +30,6 @@
         vm.isShowingDetails = false;
         vm.restaurantDetails = {};
 
-
         //FUNCTIONS
         vm.closeDetails = closeDetails;
         vm.onKeyPressed = onKeyPressed;
@@ -39,13 +38,14 @@
         vm.closeSearch = onCloseSearch;
         vm.getBoxClass = getBoxClass;
         vm.getBoxTitleClass = getBoxTitleClass;
+        vm.showAdditionalInfo = showAdditionalInfo;
 
         activate();
 
         ////////////////
 
         function activate() {
-            toastr.error('Yelp Search Engine');
+            toastr.error('Yelp Restaurant Finder!');
         }
 
         /**
@@ -58,7 +58,7 @@
             }
             vm.isSearching = true;
             IndexService.getRestaurants(vm.searchTerm).then(function(response) {
-                console.log(response);
+                // console.log(response);
                 vm.isSearching = false;
                 if (response.status === CommonService.statusCode.HTTP_NO_CONTENT) {
                     toastr.info('No restaurant found for the given criteria ' + vm.searchTerm);
@@ -164,14 +164,25 @@
         function getRestaurantDetails(restaurant) {
             vm.isShowingDetails = true;
             // console.log(restaurant);
-            var business = restaurant.businessName;
             var location = restaurant.businessCity + ', ' + restaurant.businessState;
-            YelpService.getRestaurants(business, location).then(function(successResponse) {
-                console.log(successResponse);
-                console.log(successResponse.data.region.center);
-                vm.restaurantDetails.name = restaurant.businessName;
-                var mapBusinessName = "<p style='font-weight:bold; font-size:16px;'>"+ business + "</p>";
-                renderMap(successResponse.data.region.center, mapBusinessName);
+            YelpService.getRestaurants(restaurant.businessName, location).then(function(successResponse) {
+                console.log('response', successResponse);
+                if (successResponse.status === "success") {
+                    var business = successResponse.data.businesses[0];
+                    var categories = [];
+                    angular.forEach(business.categories, function(item) {
+                        categories.push(item[0]);
+                    });
+                    // vm.restaurantDetails = business;
+                    vm.restaurantDetails.phone = business.display_phone;
+                    vm.restaurantDetails.address = business.location.display_address;
+                    vm.restaurantDetails.name = restaurant.businessName;
+                    vm.restaurantDetails.categories = categories;
+                    // vm.restaurantDetails.moreInfo = business.snippet_text;
+                    // console.log('data', vm.restaurantDetails);
+                    var mapBusinessName = "<p style='font-weight:bold; font-size:16px;'>" + restaurant.businessName + "</p>";
+                    renderMap(successResponse.data.region.center, mapBusinessName);
+                }
             }, function(errorResponse) {
                 console.log(errorResponse);
             });
@@ -204,21 +215,6 @@
                 map.setCenter(latLng);
                 setMapMarker(latLng, businessName);
             }
-            // else { //if the latitude and longitude are not provided we try using the google geocoder service
-            //     var address = info.address1 + ', ' + info.city + ', ' + info.state;
-            //     geocoder.geocode({
-            //         'address': address
-            //     }, function(results, status) {
-            //         if (status == google.maps.GeocoderStatus.OK) {
-            //             latLng = results[0].geometry.location;
-            //             map.setCenter(latLng);
-            //             setMapMarker(latLng);
-            //         } else {
-            //             toastr.warning("Geocode was not successful for the following reason: " + status);
-            //         }
-            //     });
-            // }
-            // Add a new marker at the new plotted point on the polyline.
         }
 
         /**
@@ -236,6 +232,34 @@
             });
             infowindow.open(map, marker);
         }
+
+        function showAdditionalInfo(restaurant) {
+            var modalInstance = $uibModal.open({
+                animation: false,
+                templateUrl: 'myModalContent.html',
+                controller: ['$scope', '$uibModalInstance', 'Restaurant', function($scope, $uibModalInstance, Restaurant) {
+                    // console.log(Restaurant);
+                    $scope.restaurant = Restaurant;
+                    $scope.ok = function() {
+                        $uibModalInstance.close();
+                    };
+
+                    $scope.getPercentage = function(value) {
+                        var result = parseFloat(Math.round(value * 100));
+                        if (result > 0) {
+                            return result;
+                        }
+                        return value.toFixed(6);
+                    };
+                }],
+                resolve: {
+                    Restaurant: function() {
+                        return restaurant;
+                    }
+                }
+            });
+        }
+
 
     }
 })();

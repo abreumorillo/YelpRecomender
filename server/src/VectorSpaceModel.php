@@ -160,6 +160,8 @@ class VectorSpaceModel implements SaveToFileInterface
         foreach ($this->docLength as $docId => $length) {
             $this->docLength[$docId] = sqrt($length);
         }
+
+        ProjectStatistic::initialize();
     }
 
     /**
@@ -172,7 +174,7 @@ class VectorSpaceModel implements SaveToFileInterface
     public function search($searchString)
     {
         $result = [];
-        $search = strtolower($searchString);
+        $searchString = strtolower($searchString);
         $query = explode(' ', $searchString);
         $queryLength = 0.0;
 

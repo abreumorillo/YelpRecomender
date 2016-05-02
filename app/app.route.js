@@ -5,7 +5,7 @@
         .config(['$stateProvider', '$urlRouterProvider', '$locationProvider',
             function($stateProvider, $urlRouterProvider, $locationProvider) {
                 // For any unmatched url, redirect to /index
-                $urlRouterProvider.otherwise("/index");
+                $urlRouterProvider.otherwise("/statistics");
                 //$locationProvider.html5Mode(true).hashPrefix('!');
                 // Now set up the states
                 $stateProvider
@@ -15,12 +15,16 @@
                         controllerAs: 'vm',
                         templateUrl: 'app/views/index.html'
                     })
-                    .state('details', {
-                        url: '/details/:restaurant/:city/:state',
-                        controller: 'DetailsController',
+                    .state('statistics', {
+                        url: '/statistics',
+                        controller: 'StatisticsController',
                         controllerAs: 'vm',
-                        templateUrl: 'app/views/details.html'
+                        templateUrl: 'app/views/statistics.html'
                     });
             }
         ]);
+        // .run(['$state', function($state) {
+        //     $state.go('statistics');
+        //     console.log('laoded', $state);
+        // }]);
 })();

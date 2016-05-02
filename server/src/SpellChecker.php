@@ -25,9 +25,10 @@ class SpellChecker implements SaveToFileInterface
 
         if (file_exists(SaveToFileInterface::SPELLING_CORRECTION_FILE_NAME)) {
             $this->initialize();
+        } else {
+            $this->vocabulary = $dictionary;
+            $this->saveDataToFile();
         }
-        $this->vocabulary = $dictionary;
-        $this->saveDataToFile();
     }
 
     public function saveDataToFile()
@@ -39,7 +40,6 @@ class SpellChecker implements SaveToFileInterface
     public function getDataFromFile()
     {
         $dataFromFile = json_decode(file_get_contents(SaveToFileInterface::SPELLING_CORRECTION_FILE_NAME));
-        var_dump($dataFromFile);
         $this->vocabulary = json_decode(json_encode($dataFromFile->vocabulary), true);//$indexFromFile->index;
     }
 

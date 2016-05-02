@@ -1,3 +1,9 @@
 composer.phar
 composer.lock
 .DS_Store
+
+classifier_info.json
+index_info.json
+vocabulary_info.json
+
+/optimization/*.*

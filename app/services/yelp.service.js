@@ -42,15 +42,32 @@
             var consumerSecret = 'LHoi79QzUVfEalk2ZyQ2hjA71CI'; //Consumer Secret
             var tokenSecret = 'dee4VqJl64kBu4m8RX4IFPrxkYI'; //Token Secret
             var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, { encodeSignature: false });
-            params['oauth_signature'] = signature;
-
-            $http.jsonp(url, { params: params })
-                .success(function(data, status) {
+            params.oauth_signature = signature;
+            // $http.jsonp(url, { params: params })
+            //     .success(function(data, status) {
+            //         console.log(data);
+            //         deferred.resolve({ data: data, status: status });
+            //     }).error(function(error, status) {
+            //         console.log(error);
+            //         deferred.reject({ error: error, status: status });
+            //     });
+            // return deferred.promise;
+            // OAuth.setTimestampAndNonce('test');
+            // http://stackoverflow.com/questions/35636414/yelp-api-not-working-with-angular-but-works-with-jquery
+              $.ajax({
+                'url': url,
+                'data': params,
+                'cache': true,
+                'dataType': 'jsonp',
+                'jsonpCallback': 'cb',
+                success: function (data, status) {
                     deferred.resolve({ data: data, status: status });
-                }).error(function(error, status) {
-                    deferred.reject({ error: error, status: status });
-                });
-            return deferred.promise;
+                },
+                error: function (error, status) {
+                    deferred.resolve({ data: error, status: status });
+                }
+            });
+              return deferred.promise;
         }
 
     }

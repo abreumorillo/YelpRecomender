@@ -66,6 +66,7 @@ class NaiveBayesClassifier implements SaveToFileInterface
         $dataToSave['tokens'] = $this->tokens;
         $dataToSave['totalTokens'] = $this->total_tokens;
 
+        ProjectStatistic::setClassifierTokenCount($this->total_tokens);
         $jsonData = json_encode($dataToSave);
 
         file_put_contents(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME, $jsonData);
