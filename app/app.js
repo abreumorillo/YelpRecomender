@@ -13,7 +13,9 @@ var appInfo = {
     //obtain the base url of the application
 
     var baseUrl = location.protocol + "//" + location.host + location.pathname;
-    if (!location.pathname.includes('index')) {
+
+    if(!location.pathname.includes('index')) {
+        console.log('path',location.pathname);
         baseUrl += 'index.html';
     }
 

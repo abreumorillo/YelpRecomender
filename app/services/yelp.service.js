@@ -64,7 +64,7 @@
                     deferred.resolve({ data: data, status: status });
                 },
                 error: function (error, status) {
-                    deferred.resolve({ data: error, status: status });
+                    deferred.reject({ data: error, status: status });
                 }
             });
               return deferred.promise;
