@@ -80,11 +80,13 @@ class VectorSpaceModel implements SaveToFileInterface
             return;
         }
         $parser = new Parser();
-        $this->classifier = new NaiveBayesClassifier;
-        $this->classifier->trainClassifier();
         $this->documents = $parser->getDocuments();
         $this->buildIndex();
         $this->saveDataToFile();
+        $this->classifier = new NaiveBayesClassifier;
+        $this->classifier->trainClassifier();
+        $this->classifier->evaluateClassifier();
+        ProjectStatistic::initialize();
     }
 
     public function saveDataToFile()
@@ -161,7 +163,6 @@ class VectorSpaceModel implements SaveToFileInterface
             $this->docLength[$docId] = sqrt($length);
         }
 
-        ProjectStatistic::initialize();
     }
 
     /**
@@ -228,9 +229,9 @@ class VectorSpaceModel implements SaveToFileInterface
         }
 
         foreach ($result as $document) {
-            $group = $this->classifier->classify($document->content);
-            $class = $this->classifier->getClass($group);
-            $document->classProbability = $group;
+            $classProbability = $this->classifier->classify($document->content);
+            $class = $this->classifier->getClass($classProbability);
+            $document->classProbability = $classProbability;
             $document->class = $class;
         }
 

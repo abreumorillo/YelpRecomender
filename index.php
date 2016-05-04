@@ -1,5 +1,9 @@
 <?php
 
+// $file = json_decode(file_get_contents('data/restaurant_review.json'));
+// var_dump($file);
+
+// return;
 require_once 'bootstrapper.inc';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;

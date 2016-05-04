@@ -31,7 +31,7 @@
                     $timeout(function() {
                         vm.isAppInitialized = true;
                         toastr.info('Information loaded Successfully!');
-                    }, 2000);
+                    }, 500);
                     // console.log(vm.statistics);
                 }
 

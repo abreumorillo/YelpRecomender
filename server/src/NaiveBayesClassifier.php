@@ -67,12 +67,17 @@ class NaiveBayesClassifier implements SaveToFileInterface
         $dataToSave['totalTokens'] = $this->total_tokens;
 
         ProjectStatistic::setClassifierTokenCount($this->total_tokens);
+
         $jsonData = json_encode($dataToSave);
 
         file_put_contents(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME, $jsonData);
     }
 
 
+    /**
+     * Get the information from the file
+     * @return mix
+     */
     public function getDataFromFile()
     {
         $dataFromFile = json_decode(file_get_contents(SaveToFileInterface::TRAINED_CLASSIFIER_FILE_NAME));
@@ -97,6 +102,33 @@ class NaiveBayesClassifier implements SaveToFileInterface
         }
         //Save data to file
         $this->saveDataToFile();
+    }
+
+    public function evaluateClassifier()
+    {
+        $correctlyClassified = 0;
+        $totalTestingDocuments = 0;
+        $accuracy = 0.0;
+        $testingDocuments = $this->parser->getTestingDocuments();
+
+        foreach ($testingDocuments as $class => $document) {
+            $documents = explode('|', $document);
+            foreach ($documents as $testDoc) {
+                $classProbability = $this->classify($testDoc);
+                $predictedClass = $this->getClass($classProbability);
+                $totalTestingDocuments++;
+                if($predictedClass === $class) {
+                    $correctlyClassified ++;
+                }
+            }
+        }
+
+        $accuracy = $correctlyClassified / floatval($totalTestingDocuments);
+        $accuracy = round($accuracy * 100, 2);
+        ProjectStatistic::setClassifierAccuracy($accuracy);
+        ProjectStatistic::setTestingDocumentsCount($totalTestingDocuments);
+        ProjectStatistic::setCorrectlyClassifiedCount($correctlyClassified);
+
     }
 
     /**
@@ -156,7 +188,7 @@ class NaiveBayesClassifier implements SaveToFileInterface
             $scores[$subject] = 0;
             foreach ($tokens as $token) {
                 $count = isset($this->tokens[$token][$subject]) ? $this->tokens[$token][$subject] : 0;
-                $scores[$subject] += log(($count + 1) / ($subject_data['count_tokens'] + $this->total_tokens));
+                $scores[$subject] += log(($count + 1) / (floatval($subject_data['count_tokens'] + $this->total_tokens)));
             }
             $scores[$subject] = $subject_data['prior_value'] + $scores[$subject];
             $total_score += $scores[$subject];

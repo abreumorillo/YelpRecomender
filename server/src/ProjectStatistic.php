@@ -13,8 +13,9 @@ class ProjectStatistic
     const STATISTIC_FILE_NAME = 'optimization/statistics_info.json';
 
     private static $tokenCount;
+    private static $totalDocuments;
     private static $vocabularySize;
-    private static $trainingDocumentsCount = 3000; //1000 per class
+    private static $trainingDocumentsCount = 6000; //1000 per class
     private static $englishStopWordsCount;
     private static $testingDocumentsCount;
     private static $correctlyClassified;
@@ -46,6 +47,7 @@ class ProjectStatistic
         $dataToSave['correctlyClassified'] = self::$correctlyClassified;
         $dataToSave['classifierAccurary'] = self::$classifierAccurary;
         $dataToSave['classifierTokenCount'] = self::$classifierTokenCount;
+        $dataToSave['totalDocuments'] = self::$totalDocuments;
 
         $jsonStatistic = json_encode($dataToSave);
 
@@ -65,6 +67,7 @@ class ProjectStatistic
         $result['classifierAccurary'] = $dataFromFile->classifierAccurary;
         $result['classifierTokenCount'] = $dataFromFile->classifierTokenCount;
         $result['classifierClasses'] = self::$classifierClasses;
+        $result['totalDocuments'] = $dataFromFile->totalDocuments;
 
         return $result;
     }
@@ -87,6 +90,23 @@ class ProjectStatistic
     public static function setClassifierTokenCount($count)
     {
         self::$classifierTokenCount = $count;
+    }
+
+    public static function setNumberOfDocuments($count)
+    {
+        self::$totalDocuments = $count;
+    }
+
+    public static function setClassifierAccuracy($accuracy){
+        self::$classifierAccurary = $accuracy;
+    }
+
+    public static function setTestingDocumentsCount($totalTestingDocuments) {
+        self::$testingDocumentsCount = $totalTestingDocuments;
+    }
+
+    public static function setCorrectlyClassifiedCount($count) {
+        self::$correctlyClassified = $count;
     }
 
 }

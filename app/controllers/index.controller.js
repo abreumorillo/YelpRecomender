@@ -65,6 +65,7 @@
                     vm.restaurants = [];
                 }
                 if (CommonService.isValidResponse(response)) {
+                    console.log(response);
                     vm.restaurants = [];
                     vm.restaurants = CommonService.getResponse(response);
                     vm.isSearchResult = true;

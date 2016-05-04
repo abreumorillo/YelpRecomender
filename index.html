@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en" ng-app="yrsApp">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,14 +44,18 @@
                     <a class="navbar-brand" ui-sref="index">Restaurant Finder</a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
-<!--                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li>
                             <a ui-sref="index" ui-sref-active="active">
                                 <i class="fa fa-home fa-lg"></i>&nbsp;</a>
                         </li>
+                        <li>
+                            <a ui-sref="statistics" ui-sref-active="active">
+                                <i class="fa fa-th-list fa-lg"></i>&nbsp;</a>
+                        </li>
                     </ul>
-                </div> -->
+                </div>
                 <!-- /.navbar-collapse -->
             </div>
             <!-- /.container-fluid -->
@@ -84,13 +89,10 @@
     <script src="app/services/yelp.service.js"></script>
     <script src="app/services/index.service.js"></script>
     <script src="app/services/statistics.service.js"></script>
-
     <!-- Filters -->
     <script src="app/filters/common.filters.js"></script>
-
     <!-- Directives -->
     <script src="app/directives/common.directive.js"></script>
-
     <!-- Controllers -->
     <script src="app/controllers/index.controller.js"></script>
     <script src="app/controllers/details.controller.js"></script>

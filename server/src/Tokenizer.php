@@ -12,6 +12,7 @@ namespace YRS;
  *
  * @see             : PorterStemmer.php
  */
+set_time_limit(300);
 class Tokenizer
 {
     /**
@@ -60,6 +61,7 @@ class Tokenizer
                 }
             }
         }
+        unset($tempRawTokens);
 
         return $result;
     }

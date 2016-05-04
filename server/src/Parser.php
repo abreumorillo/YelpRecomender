@@ -31,14 +31,23 @@ class Parser
      *
      * @return array object document
      */
+    // private function parse()
+    // {
+    //     foreach (glob('data/*.json') as $key => $file) {
+    //         $document = json_decode(file_get_contents($file));
+    //         preg_match('/\/(.*?)\./', $file, $match);
+    //         $document->fileName = $match[1];
+    //         $this->documents[] = $document;
+    //     }
+    // }
+
     private function parse()
     {
-        foreach (glob('data/*.json') as $key => $file) {
-            $document = json_decode(file_get_contents($file));
-            preg_match('/\/(.*?)\./', $file, $match);
-            $document->fileName = $match[1];
-            $this->documents[] = $document;
+        $restaurants = json_decode(file_get_contents('data/restaurant_review.json'));
+        foreach ($restaurants as $restaurant) {
+            $this->documents[] = $restaurant;
         }
+        ProjectStatistic::setNumberOfDocuments(count($this->documents));
     }
 
     /**

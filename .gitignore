@@ -6,4 +6,4 @@ classifier_info.json
 index_info.json
 vocabulary_info.json
 
-/optimization/*.*
+optimization/*.json
