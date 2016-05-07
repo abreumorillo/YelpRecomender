@@ -21,7 +21,6 @@
          * This functions is executed when this controller gets intatantiated
          */
         function activate() {
-            console.log('activated', $stateParams);
             var restaurant = $stateParams.restaurant;
             var location = $stateParams.city + ', '+ $stateParams.state;
             YelpService.getRestaurants(restaurant, location);

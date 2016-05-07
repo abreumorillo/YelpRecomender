@@ -32,11 +32,9 @@
                         vm.isAppInitialized = true;
                         toastr.info('Information loaded Successfully!');
                     }, 500);
-                    // console.log(vm.statistics);
                 }
 
             }, function(errorResponse) {
-                console.log(errorResponse);
                 toastr.error('An error has occurred', errorResponse.status);
             });
         }

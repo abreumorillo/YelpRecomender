@@ -27,47 +27,6 @@
     </div>
     <!-- /End search widget -->
     <!-- Result widget -->
-    <div class="nga-default nga-default nga-slide-up" ng-if="vm.isSearchResult  && vm.show">
-        <!-- Result area -->
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title"><i class="fa fa-th-list text-primary"></i> Search result <span class="label label-info">{{vm.restaurants.length}}</span></h3>
-                        <div class="box-tools pull-right">
-                            <button class="btn btn-sm btn-danger pull-right" ng-click="vm.closeSearch()"><i class="fa fa-close"></i> </button>
-                        </div>
-                    </div>
-                    <div class="box-body table-responsive ">
-                        <table class="table table-hover table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>City</th>
-                                    <th>State</th>
-                                    <th>Document</th>
-                                    <th>Score</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="restaurant in vm.restaurants" class="nga-default nga-stagger nga-slide-left" ng-click="vm.getRestaurantDetails(restaurant)">
-                                    <td>{{restaurant.businessName}}</td>
-                                    <td>{{restaurant.businessCity}}</td>
-                                    <td>{{restaurant.businessState}}</td>
-                                    <td>{{restaurant.fileName}}</td>
-                                    <td>{{restaurant.score}}</td>
-                                    <td>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /End result widget    nga-default nga-default nga-slide-up nga-stagger-->
     <div class="row nga-slow nga-stagger nga-slide-down" ng-if="vm.isSearchResult" >
         <div class="col-xs-12">
             <button class="btn btn-sm btn-danger close-btn" ng-click="vm.closeSearch()"><i class="fa fa-close fa-lg"></i> Close</button>

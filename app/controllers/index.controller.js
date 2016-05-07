@@ -1,3 +1,6 @@
+/**
+ * This script handles the behavior of the behavior of the index page of the application
+ */
 (function() {
     'use strict';
 
@@ -58,14 +61,12 @@
             }
             vm.isSearching = true;
             IndexService.getRestaurants(vm.searchTerm).then(function(response) {
-                // console.log(response);
                 vm.isSearching = false;
                 if (response.status === CommonService.statusCode.HTTP_NO_CONTENT) {
                     toastr.info('No restaurant found for the given criteria ' + vm.searchTerm);
                     vm.restaurants = [];
                 }
                 if (CommonService.isValidResponse(response)) {
-                    console.log(response);
                     vm.restaurants = [];
                     vm.restaurants = CommonService.getResponse(response);
                     vm.isSearchResult = true;
@@ -164,23 +165,18 @@
 
         function getRestaurantDetails(restaurant) {
             vm.isShowingDetails = true;
-            // console.log(restaurant);
             var location = restaurant.businessCity + ', ' + restaurant.businessState;
             YelpService.getRestaurants(restaurant.businessName, location).then(function(successResponse) {
-                console.log('response', successResponse);
                 if (successResponse.status === "success") {
                     var business = successResponse.data.businesses[0];
                     var categories = [];
                     angular.forEach(business.categories, function(item) {
                         categories.push(item[0]);
                     });
-                    // vm.restaurantDetails = business;
                     vm.restaurantDetails.phone = business.display_phone;
                     vm.restaurantDetails.address = business.location.display_address;
                     vm.restaurantDetails.name = restaurant.businessName;
                     vm.restaurantDetails.categories = categories;
-                    // vm.restaurantDetails.moreInfo = business.snippet_text;
-                    // console.log('data', vm.restaurantDetails);
                     var mapBusinessName = "<p style='font-weight:bold; font-size:16px;'>" + restaurant.businessName + "</p>";
                     renderMap(successResponse.data.region.center, mapBusinessName);
                 }

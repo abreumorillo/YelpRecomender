@@ -33,15 +33,12 @@ var appInfo = {
             'ui.bootstrap.modal'
         ])
         .config(['$compileProvider', function($compileProvider) {
-            $compileProvider.debugInfoEnabled(false); //false for production
+            $compileProvider.debugInfoEnabled(false); //false for production (optimize application)
         }])
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'; //This headers is needed in order to be able to POST form data to php scripts
         }])
         .value('appConfig', appConfig) //Provide general settings to the application.
-        .config(['$compileProvider', function($compileProvider) {
-            $compileProvider.debugInfoEnabled(false);
-        }])
         .config(function(toastrConfig) {
             angular.extend(toastrConfig, {
                 allowHtml: true,

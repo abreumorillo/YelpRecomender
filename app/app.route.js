@@ -1,3 +1,7 @@
+/**
+ * This script handles the routing part of the client application
+ * it dependes on UI router to accomplish it tasks
+ */
 (function() {
     'use strict';
     angular
@@ -23,8 +27,4 @@
                     });
             }
         ]);
-        // .run(['$state', function($state) {
-        //     $state.go('statistics');
-        //     console.log('laoded', $state);
-        // }]);
 })();
